@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Risk Sandbox</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <div class="dashboard">
+      <h1>Risk Simulation Sandbox</h1>
+
+      <div class="controls">
+        <div class="control-group">
+          <label>Initial Investment ($)</label>
+          <input type="number" id="investment" value="10000" />
+        </div>
+        <div class="control-group">
+          <label>Time Horizon (Years)</label>
+          <input type="number" id="years" value="10" />
+        </div>
+        <div class="control-group">
+          <label>Stock Allocation (<span id="stock-val">80%</span>)</label>
+          <input
+            type="range"
+            id="stocks"
+            min="0"
+            max="100"
+            value="80"
+            oninput="
+              document.getElementById('stock-val').innerText = this.value + '%'
+            "
+          />
+        </div>
+        <button onclick="runSimulation()" id="sim-btn">Simulate Risk</button>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-title">Loss Probability</div>
+          <div
+            class="stat-value"
+            id="probability-meter"
+            style="color: var(--text-muted)"
+          >
+            --%
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-title">Expected Value</div>
+          <div class="stat-value" id="expected-meter" style="color: #2dd4bf">
+            $--
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-title">Worst Case (Bottom 5%)</div>
+          <div class="stat-value" id="worst-meter" style="color: #ec4899">
+            $--
+          </div>
+        </div>
+      </div>
+
+      <div id="ai-explainer">
+        Adjust the sliders above and click simulate to see your AI-powered risk
+        analysis.
+      </div>
+
+      <div class="chart-container">
+        <canvas id="riskChart" width="800" height="350"></canvas>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
