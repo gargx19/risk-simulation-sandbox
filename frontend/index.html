@@ -1,238 +1,670 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Risk Sandbox</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-        :root {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --primary: #3b82f6;
-            --primary-hover: #2563eb;
-            --danger: #ef4444;
-        }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            display: flex;
-            justify-content: center;
-            padding: 40px 20px;
-            margin: 0;
-        }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>InvestSafe Sandbox — Investigating Fear</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --bg: #0a0e1a;
+      --surface: #111827;
+      --card: #1a2235;
+      --border: #1e2d45;
+      --accent: #3b82f6;
+      --accent2: #06b6d4;
+      --green: #10b981;
+      --red: #ef4444;
+      --yellow: #f59e0b;
+      --text: #e2e8f0;
+      --muted: #64748b;
+      --radius: 14px;
+    }
 
-        .dashboard {
-            background: var(--card-bg);
-            width: 100%;
-            max-width: 1000px;
-            border-radius: 24px;
-            padding: 40px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-        }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-        h1 {
-            margin-top: 0;
-            font-weight: 800;
-            font-size: 2.2rem;
-            background: linear-gradient(to right, #60a5fa, #a78bfa);
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      min-height: 100vh;
+    }
 
-        .controls {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-            background: rgba(15, 23, 42, 0.5);
-            padding: 25px;
-            border-radius: 16px;
-        }
+    /* HEADER */
+    header {
+      background: linear-gradient(135deg, #0d1b2a 0%, #1a2a4a 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 20px 32px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
 
-        .control-group {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
+    .logo-badge {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
 
-        label {
-            font-weight: 600;
-            font-size: 0.9rem;
-            color: var(--text-muted);
-        }
+    header h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
 
-        input[type="number"] {
-            background: var(--bg-color);
-            color: var(--text-main);
-            border: 1px solid #334155;
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 1rem;
-            outline: none;
-            transition: 0.2s;
-        }
+    header p {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
 
-        input[type="number"]:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-        }
+    .hackathon-tag {
+      margin-left: auto;
+      background: rgba(59, 130, 246, 0.15);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      color: var(--accent);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
 
-        input[type="range"] {
-            accent-color: var(--primary);
-            cursor: pointer;
-            margin-top: 10px;
-        }
+    /* MAIN LAYOUT */
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 32px 20px;
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 24px;
+    }
 
-        button {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 15px;
-            border-radius: 12px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
-            margin-top: 10px;
-        }
+    @media (max-width: 860px) {
+      main {
+        grid-template-columns: 1fr;
+      }
+    }
 
-        button:hover:not(:disabled) {
-            background: var(--primary-hover);
-            transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.4);
-        }
+    /* CARDS */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+    }
 
-        button:disabled {
-            background: #475569;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
+    .card-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
 
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 25px;
-        }
+    .card-title span {
+      font-size: 1.2rem;
+    }
 
-        .stat-card {
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid #334155;
-            padding: 20px;
-            border-radius: 16px;
-            text-align: center;
-        }
+    /* FORM */
+    label {
+      display: block;
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
 
-        .stat-title {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 8px;
-        }
+    .input-row {
+      margin-bottom: 20px;
+    }
 
-        .stat-value {
-            font-size: 1.8rem;
-            font-weight: 800;
-        }
+    .input-row input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
+      cursor: pointer;
+      height: 6px;
+    }
 
-        #ai-explainer {
-            background: rgba(59, 130, 246, 0.1);
-            border-left: 4px solid var(--primary);
-            padding: 20px 25px;
-            border-radius: 0 12px 12px 0;
-            font-size: 1.1rem;
-            line-height: 1.6;
-            margin-bottom: 40px;
-            color: #e2e8f0;
-            white-space: pre-line;
-        }
+    .value-display {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 6px;
+    }
 
-        .chart-container {
-            background: var(--bg-color);
-            padding: 20px;
-            border-radius: 16px;
-            box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.1);
-        }
-    </style>
-  </head>
+    .value-display .val {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
 
-  <body>
-    <div class="dashboard">
-      <h1>Risk Simulation Sandbox</h1>
+    .value-display .range-hint {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
 
-      <div class="controls">
-        <div class="control-group">
-          <label>Initial Investment ($)</label>
-          <input type="number" id="investment" value="10000" />
+    input[type="number"] {
+      width: 100%;
+      padding: 10px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 1rem;
+      outline: none;
+      transition: border 0.2s;
+    }
+
+    input[type="number"]:focus {
+      border-color: var(--accent);
+    }
+
+    /* RISK GAUGE */
+    .risk-indicator {
+      margin: 16px 0;
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-align: center;
+      transition: all 0.3s;
+    }
+
+    .risk-low {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--green);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .risk-medium {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--yellow);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .risk-high {
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--red);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    /* SIMULATE BUTTON */
+    #simulateBtn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+      letter-spacing: 0.5px;
+    }
+
+    #simulateBtn:hover {
+      opacity: 0.9;
+    }
+
+    #simulateBtn:active {
+      transform: scale(0.98);
+    }
+
+    #simulateBtn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* RIGHT PANEL */
+    .right-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* METRICS ROW */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    @media (max-width: 600px) {
+      .metrics-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .metric-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .metric-card .metric-label {
+      font-size: 0.72rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .metric-card .metric-value {
+      font-size: 1.4rem;
+      font-weight: 800;
+    }
+
+    .metric-card .metric-value.green {
+      color: var(--green);
+    }
+
+    .metric-card .metric-value.red {
+      color: var(--red);
+    }
+
+    .metric-card .metric-value.blue {
+      color: var(--accent2);
+    }
+
+    .metric-card .metric-value.yellow {
+      color: var(--yellow);
+    }
+
+    /* CHART */
+    .chart-wrapper {
+      position: relative;
+      height: 280px;
+    }
+
+    /* LOSS PROBABILITY BAR */
+    .prob-bar-container {
+      margin-top: 4px;
+    }
+
+    .prob-bar-track {
+      height: 10px;
+      background: var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 8px 0;
+    }
+
+    .prob-bar-fill {
+      height: 100%;
+      border-radius: 10px;
+      transition: width 0.6s ease;
+      background: linear-gradient(90deg, var(--green), var(--yellow), var(--red));
+    }
+
+    .prob-bar-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.7rem;
+      color: var(--muted);
+    }
+
+    /* AI EXPLANATION */
+    .ai-box {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(6, 182, 212, 0.08));
+      border: 1px solid rgba(59, 130, 246, 0.25);
+      border-radius: 10px;
+      padding: 16px 20px;
+      min-height: 80px;
+      font-size: 0.88rem;
+      line-height: 1.7;
+      color: var(--text);
+      white-space: pre-wrap;
+    }
+
+    .ai-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(59, 130, 246, 0.15);
+      color: var(--accent);
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* PLACEHOLDER STATE */
+    .placeholder-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: var(--muted);
+      gap: 12px;
+      padding: 30px;
+      text-align: center;
+    }
+
+    .placeholder-state .big-icon {
+      font-size: 3rem;
+    }
+
+    .placeholder-state p {
+      font-size: 0.88rem;
+      line-height: 1.6;
+    }
+
+    /* LOADER */
+    .loader {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* FOOTER */
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 0.75rem;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      margin-top: 20px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="logo-badge">📈</div>
+    <div>
+      <h1>InvestSafe Sandbox</h1>
+      <p>AI-Powered Investment Risk Simulator · Investigating Fear</p>
+    </div>
+    <div class="hackathon-tag">Finvasia Hackathon 2026</div>
+  </header>
+
+  <main>
+    <!-- LEFT: Controls -->
+    <div>
+      <div class="card">
+        <div class="card-title"><span>⚙️</span> Simulation Parameters</div>
+
+        <div class="input-row">
+          <label>Initial Investment (₹)</label>
+          <input type="number" id="investment" value="100000" min="1000" step="1000" />
         </div>
-        <div class="control-group">
-          <label>Time Horizon (Years)</label>
-          <input type="number" id="years" value="10" />
-        </div>
-        <div class="control-group">
-          <label>Stock Allocation (<span id="stock-val">80%</span>)</label>
-          <input
-            type="range"
-            id="stocks"
-            min="0"
-            max="100"
-            value="80"
-            oninput="
-              document.getElementById('stock-val').innerText = this.value + '%'
-            "
-          />
-        </div>
-        <button onclick="runSimulation()" id="sim-btn">Simulate Risk</button>
-      </div>
 
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-title">Loss Probability</div>
-          <div
-            class="stat-value"
-            id="probability-meter"
-            style="color: var(--text-muted)"
-          >
-            --%
+        <div class="input-row">
+          <label>Stock Allocation — <span id="stockLabel">60%</span></label>
+          <input type="range" id="stockSlider" min="0" max="100" value="60" step="5"
+            oninput="updateStockLabel(this.value)" />
+          <div class="value-display">
+            <span class="range-hint">0% = All Bonds</span>
+            <span class="range-hint">100% = All Stocks</span>
           </div>
         </div>
-        <div class="stat-card">
-          <div class="stat-title">Expected Value</div>
-          <div class="stat-value" id="expected-meter" style="color: #2dd4bf">
-            $--
+
+        <div class="input-row">
+          <label>Time Horizon — <span id="yearsLabel">10 years</span></label>
+          <input type="range" id="yearsSlider" min="1" max="40" value="10" step="1"
+            oninput="updateYearsLabel(this.value)" />
+          <div class="value-display">
+            <span class="range-hint">1 yr</span>
+            <span class="range-hint">40 yrs</span>
           </div>
         </div>
-        <div class="stat-card">
-          <div class="stat-title">Worst Case (Bottom 5%)</div>
-          <div class="stat-value" id="worst-meter" style="color: #ec4899">
-            $--
-          </div>
-        </div>
+
+        <div class="risk-indicator risk-medium" id="riskIndicator">⚡ Moderate Risk Profile</div>
+
+        <button id="simulateBtn" onclick="runSimulation()">🚀 Run 1,000 Simulations</button>
       </div>
 
-      <div id="ai-explainer">
-        Adjust the sliders above and click simulate to see your AI-powered risk
-        analysis.
-      </div>
-
-      <div class="chart-container">
-        <canvas id="riskChart" width="800" height="350"></canvas>
+      <!-- How it works -->
+      <div class="card" style="margin-top:16px;">
+        <div class="card-title"><span>💡</span> How It Works</div>
+        <p style="font-size:0.83rem; color:var(--muted); line-height:1.7;">
+          This sandbox runs <strong style="color:var(--text)">1,000 Monte Carlo simulations</strong> of your portfolio
+          across
+          different market conditions. It calculates your median outcome and worst-case (5th percentile)
+          scenario, then uses an <strong style="color:var(--text)">AI coach (Llama 3.1)</strong> to explain the results
+          in plain language — helping you understand risk without fear.
+        </p>
       </div>
     </div>
 
-    <script src="app.js"></script>
-  </body>
+    <!-- RIGHT: Results -->
+    <div class="right-panel">
+
+      <!-- Metrics -->
+      <div class="card">
+        <div class="card-title"><span>📊</span> Simulation Results</div>
+        <div class="metrics-grid" id="metricsGrid">
+          <div class="placeholder-state" style="grid-column:1/-1; padding:20px;">
+            <div class="big-icon">🎯</div>
+            <p>Set your parameters and run a simulation to see results.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chart -->
+      <div class="card">
+        <div class="card-title"><span>📉</span> Portfolio Paths (5 Sample Runs)</div>
+        <div class="chart-wrapper">
+          <canvas id="portfolioChart"></canvas>
+          <div class="placeholder-state" id="chartPlaceholder">
+            <div class="big-icon">📈</div>
+            <p>Your simulation chart will appear here after running.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loss Probability -->
+      <div class="card" id="lossCard" style="display:none;">
+        <div class="card-title"><span>🎲</span> Loss Probability Meter</div>
+        <div class="prob-bar-container">
+          <div style="display:flex; justify-content:space-between; font-size:0.85rem;">
+            <span>Chance of losing money</span>
+            <strong id="lossPercent" style="color:var(--yellow)">0%</strong>
+          </div>
+          <div class="prob-bar-track">
+            <div class="prob-bar-fill" id="lossFill" style="width:0%"></div>
+          </div>
+          <div class="prob-bar-labels">
+            <span>0% (No Risk)</span>
+            <span>50% (High Risk)</span>
+            <span>100% (Certain Loss)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI Explanation -->
+      <div class="card" id="aiCard" style="display:none;">
+        <div class="card-title"><span>🤖</span> AI Financial Coach</div>
+        <div class="ai-chip">🧠 Powered by Llama 3.1 via Groq</div>
+        <div class="ai-box" id="aiText">Generating analysis...</div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer>
+    InvestSafe Sandbox · Team Tech4 · Finvasia Innovation Hackathon 2026 · Chitkara University
+  </footer>
+
+  <script>
+    const API_BASE = 'http://localhost:5000';
+    let chart = null;
+
+    function updateStockLabel(v) {
+      document.getElementById('stockLabel').textContent = v + '%';
+      updateRiskIndicator(parseInt(v));
+    }
+
+    function updateYearsLabel(v) {
+      document.getElementById('yearsLabel').textContent = v + ' year' + (v == 1 ? '' : 's');
+    }
+
+    function updateRiskIndicator(stocks) {
+      const el = document.getElementById('riskIndicator');
+      el.className = 'risk-indicator';
+      if (stocks <= 30) {
+        el.classList.add('risk-low');
+        el.textContent = '🛡️ Conservative Risk Profile';
+      } else if (stocks <= 70) {
+        el.classList.add('risk-medium');
+        el.textContent = '⚡ Moderate Risk Profile';
+      } else {
+        el.classList.add('risk-high');
+        el.textContent = '🔥 Aggressive Risk Profile';
+      }
+    }
+
+    function formatCurrency(v) {
+      if (v >= 100000) return '₹' + (v / 100000).toFixed(2) + 'L';
+      if (v >= 1000) return '₹' + (v / 1000).toFixed(1) + 'K';
+      return '₹' + v.toFixed(0);
+    }
+
+    async function runSimulation() {
+      const btn = document.getElementById('simulateBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="loader"></span>Simulating...';
+
+      const investment = parseFloat(document.getElementById('investment').value);
+      const stocks = parseFloat(document.getElementById('stockSlider').value);
+      const years = parseInt(document.getElementById('yearsSlider').value);
+
+      try {
+        const res = await fetch(`${API_BASE}/api/simulate`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ initial_investment: investment, years, stock_allocation: stocks })
+        });
+        const json = await res.json();
+
+        if (json.status !== 'success') throw new Error(json.message);
+        const d = json.data;
+
+        // Metrics
+        const grid = document.getElementById('metricsGrid');
+        grid.innerHTML = `
+      <div class="metric-card">
+        <div class="metric-label">Expected Value</div>
+        <div class="metric-value green">${formatCurrency(d.expected_value)}</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Worst Case (5%)</div>
+        <div class="metric-value red">${formatCurrency(d.worst_case)}</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Best Case (95%)</div>
+        <div class="metric-value blue">${formatCurrency(d.best_case)}</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Loss Probability</div>
+        <div class="metric-value yellow">${d.loss_probability}%</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Time Horizon</div>
+        <div class="metric-value blue">${years} yrs</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Stock Allocation</div>
+        <div class="metric-value">${stocks}%</div>
+      </div>
+    `;
+
+        // Chart
+        document.getElementById('chartPlaceholder').style.display = 'none';
+        const ctx = document.getElementById('portfolioChart').getContext('2d');
+        if (chart) chart.destroy();
+
+        const labels = Array.from({ length: d.sample_paths[0].length }, (_, i) => i);
+        const colors = ['#3b82f6', '#06b6d4', '#10b981', '#f59e0b', '#ef4444'];
+
+        chart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels,
+            datasets: d.sample_paths.map((path, i) => ({
+              data: path,
+              borderColor: colors[i],
+              borderWidth: 2,
+              pointRadius: 0,
+              tension: 0.3,
+              fill: false,
+              label: `Scenario ${i + 1}`
+            }))
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { labels: { color: '#94a3b8', font: { size: 11 } } }
+            },
+            scales: {
+              x: {
+                ticks: { color: '#64748b', maxTicksLimit: 8 },
+                grid: { color: 'rgba(255,255,255,0.05)' },
+                title: { display: true, text: 'Month', color: '#64748b' }
+              },
+              y: {
+                ticks: {
+                  color: '#64748b',
+                  callback: v => formatCurrency(v)
+                },
+                grid: { color: 'rgba(255,255,255,0.05)' },
+                title: { display: true, text: 'Portfolio Value', color: '#64748b' }
+              }
+            }
+          }
+        });
+
+        // Loss probability bar
+        document.getElementById('lossCard').style.display = 'block';
+        document.getElementById('lossPercent').textContent = d.loss_probability + '%';
+        setTimeout(() => {
+          document.getElementById('lossFill').style.width = Math.min(d.loss_probability * 2, 100) + '%';
+        }, 100);
+
+        // AI explanation
+        document.getElementById('aiCard').style.display = 'block';
+        document.getElementById('aiText').textContent = d.ai_explanation;
+
+      } catch (err) {
+        alert('Error: ' + err.message + '\n\nMake sure the backend server is running at localhost:5000');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '🚀 Run 1,000 Simulations';
+      }
+    }
+  </script>
+</body>
+
 </html>
