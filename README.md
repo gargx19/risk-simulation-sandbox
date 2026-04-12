@@ -139,10 +139,10 @@ Returns `{"status": "ok"}` if the server is running.
 
 | Name | Role |
 |------|------|
-| Krish Garg | Team Lead |
+| Krish Garg | Team Lead & Backend Developer |
 | Lipika | Frontend Developer |
 | Diksha | AI/ML Integration |
-| Devanshu Garg | Backend Developer |
+| Devanshu Garg | Documentation & Testing |
 
 ---
 
