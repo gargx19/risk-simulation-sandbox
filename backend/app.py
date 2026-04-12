@@ -1,13 +1,17 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import numpy as np
+from dotenv import load_dotenv
 import os
 from groq import Groq
+
+load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
 
 # --- 1. CONFIGURATION ---
+# Load API key from environment variable (set in .env or system env)
 GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "")
 
 if not GROQ_API_KEY:
